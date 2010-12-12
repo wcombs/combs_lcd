@@ -14,17 +14,21 @@ def getchar():
 class CombsLCD:
 	def __init__(self, x_max, y_max):
 		self._home = "\x01"
+		self._hide_cursor = "\x04"
+		self._scroll_off = "\x14"
 		self._clear = "\x0c"
 		self.x_max = x_max
 		self.y_max = y_max
 		self.y_pointer = 0
 		self.x_pointer = 0
 		self.currentText = []
-		self.ser = serial.Serial('/dev/cu.usbserial-00001004', 19200, timeout=1)
-		#self.ser = serial.Serial('/dev/cu.usbserial-00002006', 19200, timeout=1)
+#		self.ser = serial.Serial('/dev/cu.usbserial-00001004', 19200, timeout=1)
+		self.ser = serial.Serial('/dev/cu.usbserial-00002006', 19200, timeout=1)
 	def displayToConsole(self):
 		os.system('clear')
 		self.ser.write(self._clear)
+		self.ser.write(self._scroll_off)
+		self.ser.write(self._hide_cursor)
 		print(self.x_pointer, self.y_pointer)
 		sys.stdout.write("|" + "-" * self.x_max + "|\n")
 		for i in range(self.y_pointer,self.y_pointer + self.y_max):
