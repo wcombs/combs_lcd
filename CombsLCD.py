@@ -1,5 +1,5 @@
-import sys, time, os, tty, termios, serial
-
+import sys, time, os, tty, termios, serial, urllib2
+from xml.dom import minidom
 
 class CombsLCD:
 	def __init__(self, x_max, y_max):
@@ -96,7 +96,21 @@ def getchar():
 		termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 	return ch
 
+def wsCall(url):
+	try:
+		data = urllib2.urlopen(url).read()
+	except urllib2.HTTPError, e:
+		print "HTTP error: %d" % e.code
+	except urllib2.URLError, e:
+		print "Network error: %s" % e.reason.args[1]
+	return minidom.parseString(data)
+
 def main():
+
+	test = wsCall("http://weather.yahooapis.com/forecastrss?w=2502265")
+	print(test.childNodes[0].childNodes[1].childNodes[17].attributes["chill"].value)
+	exit()
+
 	x = CombsLCD(20,4)
 
 	x.addTextBlock("This is a sample sentence right here to test how the lcd will display this sample sentence right here and here it is.")
